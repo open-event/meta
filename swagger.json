@@ -19,6 +19,7 @@
             "get": {
                 "responses": {
                     "200": {
+                        "description": "List of events",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -49,8 +50,15 @@
                 ],
                 "responses": {
                     "200": {
+                        "description": "details of event",
                         "schema": {
                             "$ref": "#/definitions/Event"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
                         }
                     }
                 }
@@ -92,114 +100,26 @@
                 }
             }
         },
-        "/estimates/time": {
+        "/events/{eventId}/speakers": {
             "get": {
-                "summary": "Time Estimates",
-                "description": "The Time Estimates endpoint returns ETAs for all products offered at a given location, with the responses expressed as integers in seconds. We recommend that this endpoint be called every minute to provide the most accurate, up-to-date ETAs.",
                 "parameters": [
                     {
-                        "name": "start_latitude",
-                        "in": "query",
-                        "description": "Latitude component of start location.",
+                        "name": "eventId",
+                        "in": "path",
                         "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "start_longitude",
-                        "in": "query",
-                        "description": "Longitude component of start location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "customer_uuid",
-                        "in": "query",
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Unique customer identifier to be used for experience customization."
-                    },
-                    {
-                        "name": "product_id",
-                        "in": "query",
-                        "type": "string",
-                        "description": "Unique identifier representing a specific product for a given latitude & longitude."
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Event id"
                     }
-                ],
-                "tags": [
-                    "Estimates"
                 ],
                 "responses": {
                     "200": {
-                        "description": "An array of products",
+                        "description": "An array of speakers",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/Product"
+                                "$ref": "#/definitions/Speaker"
                             }
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/me": {
-            "get": {
-                "summary": "User Profile",
-                "description": "The User Profile endpoint returns information about the Uber user that has authorized with the application.",
-                "tags": [
-                    "User"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Profile information for a user",
-                        "schema": {
-                            "$ref": "#/definitions/Profile"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/history": {
-            "get": {
-                "summary": "User Activity",
-                "description": "The User Activity endpoint returns data about a user's lifetime activity with Uber. The response will include pickup locations and times, dropoff locations and times, the distance of past requests, and information about which products were requested.<br><br>The history array in the response will have a maximum length based on the limit parameter. The response value count may exceed limit, therefore subsequent API requests may be necessary.",
-                "parameters": [
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "Offset the list of returned results by this amount. Default is zero."
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "Number of items to retrieve. Default is 5, maximum is 100."
-                    }
-                ],
-                "tags": [
-                    "User"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "History information for the given user",
-                        "schema": {
-                            "$ref": "#/definitions/Activities"
                         }
                     },
                     "default": {
@@ -279,7 +199,7 @@
                         }
                     }
                 },
-                "tags": {
+                "keywords": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -292,6 +212,50 @@
             "properties": {
                 "id": {
                     "type": "integer"
+                },
+                "person": {
+                    "$ref": "#/definitions/Person"
+                },
+                "bio": {
+                    "type": "string"
+                }
+            }
+        },
+        "Person": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "profiles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Link"
+                    }
+                }
+            }
+        },
+        "Link": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "alt": {
+                    "type": "string"
                 }
             }
         },
